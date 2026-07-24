@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: melodix
+    runtime: image
+    dockerfilePath: Dockerfile
+    healthCheckPath: /healthz
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: INIT_SLASH_COMMANDS
+        value: "true"
+      - key: STORAGE_PATH
+        value: /usr/project/data/datastore.json
+      - key: LOG_LEVEL
+        value: info

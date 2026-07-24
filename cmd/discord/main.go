@@ -5,6 +5,7 @@ import (
 	"context"
 	"flag"
 	"math/rand/v2"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -81,6 +82,22 @@ func main() {
 	bot := discord.NewBot(cfg, store, log)
 
 	registerCommands(bot, log)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	go func() {
+		mux := http.NewServeMux()
+		mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("ok"))
+		})
+		log.Info().Str("port", port).Msg("health_server_starting")
+		if err := http.ListenAndServe(":"+port, mux); err != nil {
+			log.Error().Err(err).Msg("health_server_failed")
+		}
+	}()
 
 	var wg sync.WaitGroup
 	wg.Add(1)
