@@ -45,6 +45,6 @@ RUN apk add --no-cache \
 WORKDIR /usr/project
 COPY --from=builder /usr/project/app ./app
 
-RUN mkdir -p data && touch data/datastore.json
+RUN mkdir -p data && echo '{}' > data/datastore.json
 
 ENTRYPOINT ["/usr/project/app"]
